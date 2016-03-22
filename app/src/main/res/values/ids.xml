@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="loader_manager" type="id" />
+    <item name="pokedex" type="id" />
+    <item name="recyclerViewOnScrollListener" type="id" />
+    <item name="component" type="id" />
+</resources>

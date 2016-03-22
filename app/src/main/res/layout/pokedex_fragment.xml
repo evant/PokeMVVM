@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="me.tatarka.bindingcollectionadapter.LayoutManagers" />
+
+        <import type="me.tatarka.pokemvvm.databinding.RVUtils" />
+
+        <import type="me.tatarka.pokemvvm.pokedex.PokedexViewModel.State" />
+
+        <variable
+            name="viewModel"
+            type="me.tatarka.pokemvvm.pokedex.PokedexViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:itemView="@{viewModel.itemView}"
+            app:items="@{viewModel.items()}"
+            app:layoutManager="@{LayoutManagers.linear()}"
+            app:onScrolled="@{(rv, dx, dy) -> viewModel.onScrolled(RVUtils.lastVisibleItemPosition(rv))}"
+            tools:listitem="@layout/pokedex_item" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="@{viewModel.state == State.LOADING &amp;&amp; viewModel.items().isEmpty()}" />
+    </FrameLayout>
+</layout>
