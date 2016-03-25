@@ -30,6 +30,7 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
     @Inject
     PokedexViewModel viewModel;
 
+    private RxPagedLoader<PokemonItem> loader;
     private PokedexFragmentBinding binding;
 
     @Nullable
@@ -46,7 +47,7 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
 
         viewModel.setCallbacks(this);
 
-        RxPagedLoader<PokemonItem> loader = loaderManager().init(0, RxPagedLoader.create(pager.pokemon()), this);
+        loader = loaderManager().init(0, RxPagedLoader.create(pager.pokemon()), this);
         loader.start();
 
         if (loader.isRunning()) {
@@ -54,6 +55,11 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
         }
 
         binding.setViewModel(viewModel);
+    }
+
+    @Override
+    public void onRequestRetry() {
+        loader.restart();
     }
 
     @Override
@@ -68,14 +74,7 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
 
     @Override
     public void onLoaderResult(Result<PagedResult<PokemonItem>> result) {
-        if (result.isSuccess()) {
-            PagedResult<PokemonItem> pagedResult = result.getSuccess();
-            viewModel.addItems(pagedResult);
-        } else {
-            Throwable error = result.getError();
-            viewModel.setError();
-            Log.e(TAG, error.getMessage(), error);
-        }
+        viewModel.addItems(result);
     }
 
     @Override

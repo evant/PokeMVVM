@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PokeMVVM</string>
+    <string name="error_loading_data">Error Loading Data</string>
+    <string name="retry">Retry</string>
 </resources>
