@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.tatarka.loader.Loader;
-import me.tatarka.loader.Result;
 import me.tatarka.pokemvvm.pokedex.PagedResult;
 import me.tatarka.retainstate.RetainState;
 import rx.Observable;
@@ -13,7 +12,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
-public class RxPagedLoader<T> extends Loader<Result<PagedResult<T>>> {
+public class RxPagedLoader<T> extends Loader<PagedResult<T>> {
 
     public static <T> RetainState.OnCreate<RxPagedLoader<T>> create(final Observable<List<T>> observable) {
         return new RetainState.OnCreate<RxPagedLoader<T>>() {
@@ -39,12 +38,12 @@ public class RxPagedLoader<T> extends Loader<Result<PagedResult<T>>> {
                     @Override
                     public void call(List<T> items) {
                         results.addAll(items);
-                        receiver.deliverResult(Result.success(new PagedResult<>(results, results.size() - items.size())));
+                        receiver.deliverResult(PagedResult.success(results, results.size() - items.size()));
                     }
                 }, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable error) {
-                        receiver.deliverResult(Result.<PagedResult<T>>error(error));
+                        receiver.deliverResult(PagedResult.error(results, error));
                         receiver.complete();
                     }
                 }, new Action0() {

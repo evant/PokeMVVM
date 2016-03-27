@@ -2,4 +2,8 @@
     <string name="app_name">PokeMVVM</string>
     <string name="error_loading_data">Error Loading Data</string>
     <string name="retry">Retry</string>
+    
+    <string name="pokemon_name">#%1$s %2$s</string>
+    <string name="pokemon_height_weight">HT: %1$d WT: %2$d</string>
+    <string name="stats">Stats</string>
 </resources>

@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import me.tatarka.pokemvvm.api.Page;
 import me.tatarka.pokemvvm.api.PokeService;
 import me.tatarka.pokemvvm.api.PokemonItem;
+import me.tatarka.pokemvvm.dagger.RetainedScope;
 import okhttp3.HttpUrl;
 import rx.Observable;
 import rx.Single;
@@ -18,7 +19,7 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subjects.BehaviorSubject;
 
-@Singleton
+@RetainedScope
 public class PokedexPager {
     private PokeService api;
     private BehaviorSubject<HttpUrl> nextRequests = BehaviorSubject.create((HttpUrl) null);
@@ -39,8 +40,8 @@ public class PokedexPager {
             @Override
             public Observable<Page<PokemonItem>> call(HttpUrl url) {
                 Single<Page<PokemonItem>> call = url == null
-                        ? api.pokemon()
-                        : api.nextPokemon(url.toString());
+                        ? api.firstPokemonPage()
+                        : api.nextPokemonPage(url.toString());
                 return call.doOnSuccess(new Action1<Page<PokemonItem>>() {
                     @Override
                     public void call(Page<PokemonItem> page) {

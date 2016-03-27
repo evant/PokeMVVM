@@ -6,6 +6,7 @@ import me.tatarka.pokemvvm.R;
 import me.tatarka.pokemvvm.api.ApiModule;
 import me.tatarka.pokemvvm.pokedex.PokedexFragment;
 import me.tatarka.pokemvvm.pokedex.PokedexRetainedComponent;
+import me.tatarka.pokemvvm.pokemon.PokemonFragment;
 import me.tatarka.retainstate.RetainState;
 
 public class Dagger {
@@ -28,5 +29,9 @@ public class Dagger {
                 return component(fragment.getContext()).retainedPokedex();
             }
         }).pokedex().inject(fragment);
+    }
+
+    public static void inject(PokemonFragment fragment) {
+        component(fragment.getContext()).pokemon().inject(fragment);
     }
 }

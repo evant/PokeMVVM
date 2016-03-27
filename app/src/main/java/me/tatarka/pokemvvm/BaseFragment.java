@@ -9,7 +9,6 @@ import me.tatarka.retainstate.RetainState;
 import me.tatarka.retainstate.fragment.RetainStateFragment;
 
 public class BaseFragment extends Fragment implements RetainState.Provider {
-
     private RetainState retainState;
     private LoaderManager loaderManager;
 
@@ -36,13 +35,23 @@ public class BaseFragment extends Fragment implements RetainState.Provider {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        if (loaderManager != null && isRemoving()) {
+            loaderManager.detach();
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        if (getActivity().isFinishing() || isRemoving()) {
-            RetainState.from(getHost()).remove(RetainStateFragment.getId(this));
-            loaderManager.destroy();
-        } else {
-            loaderManager.detach();
+        if (loaderManager != null) {
+            if (getActivity().isFinishing() || isRemoving()) {
+                RetainState.from(getHost()).remove(RetainStateFragment.getId(this));
+                loaderManager.destroy();
+            } else {
+                loaderManager.detach();
+            }
         }
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jakewharton.picasso.OkHttp3Downloader;
+import com.squareup.picasso.Picasso;
 
 import javax.inject.Singleton;
 
@@ -33,6 +35,7 @@ public class ApiModule {
     public OkHttpClient providesOkHttpClient() {
         return new OkHttpClient.Builder()
                 .cache(new Cache(context.getCacheDir(), CACHE_SIZE))
+                .addInterceptor(new CachingInterceptor(context))
                 .build();
     }
 
@@ -47,12 +50,21 @@ public class ApiModule {
 
     @Provides
     @Singleton
-    public PokeService providesPokeService(Gson gson) {
+    public PokeService providesPokeService(OkHttpClient client, Gson gson) {
         Retrofit retrofit = new Retrofit.Builder()
+                .client(client)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .baseUrl("http://pokeapi.co/api/v2/")
                 .build();
         return retrofit.create(PokeService.class);
+    }
+
+    @Provides
+    @Singleton
+    public Picasso providesPicasso(OkHttpClient client) {
+        return new Picasso.Builder(context)
+                .downloader(new OkHttp3Downloader(client))
+                .build();
     }
 }

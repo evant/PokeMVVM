@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="me.tatarka.pokemvvm.viewmodel.State" />
+
+        <variable
+            name="viewModel"
+            type="me.tatarka.pokemvvm.pokemon.PokemonViewModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="@{viewModel.state == State.LOADED}"
+                app:slideAndFade="@{true}">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/padding_normal">
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp" />
+
+                    <me.tatarka.pokemvvm.pokemon.TableCardLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:title="@string/stats"
+                        app:data="@{viewModel.statData(viewModel.pokemon)}" />
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+            <include
+                layout="@layout/include_error"
+                app:viewModel="@{viewModel}"
+                app:visible="@{viewModel.state == State.ERROR}" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="@{viewModel.state == State.LOADING}" />
+        </FrameLayout>
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:transitionName="app_bar">
+
+            <me.tatarka.pokemvvm.pokemon.TitleView
+                android:id="@+id/title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:transitionName="toolbar"
+                app:image="@{viewModel.pokemon.sprites.frontDefault}"
+                app:subtitle="@{viewModel.heightWeight(context.resources, viewModel.pokemon)}"
+                app:title="@{viewModel.name(context.resources)}" />
+        </android.support.design.widget.AppBarLayout>
+
+        <me.tatarka.pokemvvm.pokemon.ChipLayout
+            android:id="@+id/types"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/padding_normal"
+            android:layout_marginRight="@dimen/padding_normal"
+            android:elevation="6dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:chips="@{viewModel.chips(context.resources, viewModel.pokemon)}"
+            app:layout_anchor="@+id/app_bar"
+            app:layout_anchorGravity="bottom|end" />
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

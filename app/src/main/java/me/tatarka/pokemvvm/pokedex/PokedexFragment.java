@@ -3,7 +3,7 @@ package me.tatarka.pokemvvm.pokedex;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import me.tatarka.loader.Loader;
-import me.tatarka.loader.Result;
 import me.tatarka.pokemvvm.BaseFragment;
 import me.tatarka.pokemvvm.R;
 import me.tatarka.pokemvvm.api.PokemonItem;
@@ -20,10 +19,13 @@ import me.tatarka.pokemvvm.dagger.Dagger;
 import me.tatarka.pokemvvm.databinding.PokedexFragmentBinding;
 
 /**
- * Displays a paginated lists of all the pokemon.
+ * Displays a paginated lists of all the firstPokemonPage.
  */
-public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Result<PagedResult<PokemonItem>>>, PokedexViewModel.Callbacks {
-    private static final String TAG = "PokemonListFragment";
+public class PokedexFragment extends BaseFragment implements Loader.Callbacks<PagedResult<PokemonItem>>, PokedexViewModel.Callbacks {
+
+    public static PokedexFragment newInstance() {
+        return new PokedexFragment();
+    }
 
     @Inject
     PokedexPager pager;
@@ -38,6 +40,12 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.pokedex_fragment, container, false);
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -68,17 +76,27 @@ public class PokedexFragment extends BaseFragment implements Loader.Callbacks<Re
     }
 
     @Override
+    public void onSelectItem(PokemonItem item) {
+        ((PokemonItemViewModel.OnSelectListener) getHost()).selectItem(item);
+    }
+
+    @Override
     public void onLoaderStart() {
 
     }
 
     @Override
-    public void onLoaderResult(Result<PagedResult<PokemonItem>> result) {
+    public void onLoaderResult(PagedResult<PokemonItem> result) {
         viewModel.addItems(result);
     }
 
     @Override
     public void onLoaderComplete() {
         viewModel.stopLoading();
+    }
+
+    public void addSharedElements(FragmentTransaction ft) {
+        ft.addSharedElement(binding.appBar, "app_bar")
+                .addSharedElement(binding.toolbar, "toolbar");
     }
 }

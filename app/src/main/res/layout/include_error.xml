@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="visible"
+            type="boolean" />
+
+        <variable
+            name="viewModel"
+            type="me.tatarka.pokemvvm.viewmodel.ErrorViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="@{visible}">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:padding="16dp"
+            android:text="@string/error_loading_data"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <Button
+            android:id="@+id/retry"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClickListener="@{() -> viewModel.retry()}"
+            android:text="@string/retry" />
+    </LinearLayout>
+</layout>

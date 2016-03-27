@@ -9,14 +9,14 @@
 
         <import type="me.tatarka.pokemvvm.databinding.RVUtils" />
 
-        <import type="me.tatarka.pokemvvm.pokedex.PokedexViewModel.State" />
+        <import type="me.tatarka.pokemvvm.viewmodel.State" />
 
         <variable
             name="viewModel"
             type="me.tatarka.pokemvvm.pokedex.PokedexViewModel" />
     </data>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -27,38 +27,34 @@
             app:itemView="@{viewModel.itemView}"
             app:items="@{viewModel.items()}"
             app:layoutManager="@{LayoutManagers.linear()}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:onScrolled="@{(rv, dx, dy) -> viewModel.onScrolled(RVUtils.lastVisibleItemPosition(rv))}"
             tools:listitem="@layout/pokedex_item" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="vertical"
-            android:visibility="@{viewModel.state == State.ERROR &amp;&amp; viewModel.items().isEmpty()}">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:padding="16dp"
-                android:text="@string/error_loading_data"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-            <Button
-                android:id="@+id/retry"
-                style="@style/Widget.AppCompat.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:onClickListener="@{() -> viewModel.retry()}"
-                android:text="@string/retry" />
-        </LinearLayout>
+        <include
+            layout="@layout/include_error"
+            app:viewModel="@{viewModel}"
+            app:visible="@{viewModel.state == State.ERROR &amp;&amp; viewModel.items().isEmpty()}" />
 
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="@{viewModel.state == State.LOADING &amp;&amp; viewModel.items().isEmpty()}" />
-    </FrameLayout>
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:transitionName="app_bar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:transitionName="toolbar"
+                app:title="@string/app_name" />
+        </android.support.design.widget.AppBarLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

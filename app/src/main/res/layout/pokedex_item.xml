@@ -11,8 +11,12 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="@{item.name()}"
+        android:layout_height="48dp"
+        android:background="?selectableItemBackground"
+        android:gravity="center_vertical"
+        android:onClickListener="@{() -> item.select()}"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@{item.name(context.resources)}"
         tools:text="bulbasaur" />
 </layout>

@@ -13,14 +13,24 @@ import rx.functions.Func1;
 public class PagedResult<T> {
     private final List<T> items;
     private final int newItemsStartIndex;
+    private final Throwable error;
 
     /**
      * Constructs a new PagedResult with the given items in the index where new items from the last
      * paged result starts.
      */
-    public PagedResult(@NonNull List<T> items, int newItemsStartIndex) {
+    public static <T> PagedResult<T> success(List<T> items, int newItemsStartIndex) {
+        return new PagedResult<>(items, newItemsStartIndex, null);
+    }
+
+    public static <T> PagedResult<T> error(List<T> items, Throwable error) {
+        return new PagedResult<>(items, items.size(), error);
+    }
+
+    private PagedResult(@NonNull List<T> items, int newItemsStartIndex, Throwable error) {
         this.items = items;
         this.newItemsStartIndex = newItemsStartIndex;
+        this.error = error;
     }
 
     /**
@@ -54,5 +64,13 @@ public class PagedResult<T> {
             newItems.add(f.call(item));
         }
         out.addAll(newItems);
+    }
+
+    public Throwable getError() {
+        return error;
+    }
+
+    public boolean isSuccess() {
+        return error == null;
     }
 }

@@ -22,7 +22,7 @@ public class PokedexPagerTest {
     @Test
     public void immediatelyReturnsFirstPage() throws Exception {
         PokeService service = mock(PokeService.class);
-        when(service.pokemon()).thenReturn(Single.just(Page.create(0, null, null, Arrays.asList(
+        when(service.firstPokemonPage()).thenReturn(Single.just(Page.create(0, null, null, Arrays.asList(
                 PokemonItem.create("bulbasaur", HttpUrl.parse("http://url"))
         ))));
         PokedexPager pager = new PokedexPager(service);
@@ -38,10 +38,10 @@ public class PokedexPagerTest {
     @Test
     public void returnsNextPageWhenAsked() throws Exception {
         PokeService service = mock(PokeService.class);
-        when(service.pokemon()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
+        when(service.firstPokemonPage()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
                 PokemonItem.create("bulbasaur", HttpUrl.parse("http://url"))
         ))));
-        when(service.nextPokemon(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
+        when(service.nextPokemonPage(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
                 PokemonItem.create("ivysaur", HttpUrl.parse("http://url"))
         ))));
         PokedexPager pager = new PokedexPager(service);
@@ -59,10 +59,10 @@ public class PokedexPagerTest {
     @Test
     public void onFailureAResubscriptionContinuesWhereItLeftOff() {
         PokeService service = mock(PokeService.class);
-        when(service.pokemon()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
+        when(service.firstPokemonPage()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
                 PokemonItem.create("bulbasaur", HttpUrl.parse("http://url"))
         ))));
-        when(service.nextPokemon(eq("http://2/"))).thenReturn(Single.<Page<PokemonItem>>error(new IOException()));
+        when(service.nextPokemonPage(eq("http://2/"))).thenReturn(Single.<Page<PokemonItem>>error(new IOException()));
         PokedexPager pager = new PokedexPager(service);
         TestSubscriber<List<PokemonItem>> subscriber = TestSubscriber.create();
         pager.pokemon().subscribe(subscriber);
@@ -73,7 +73,7 @@ public class PokedexPagerTest {
         ));
         subscriber.assertError(IOException.class);
 
-        when(service.nextPokemon(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
+        when(service.nextPokemonPage(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
                 PokemonItem.create("ivysaur", HttpUrl.parse("http://url"))
         ))));
         subscriber = TestSubscriber.create();
@@ -88,10 +88,10 @@ public class PokedexPagerTest {
     @Test
     public void settingNextPageToNulLResetsToFirstPage() {
         PokeService service = mock(PokeService.class);
-        when(service.pokemon()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
+        when(service.firstPokemonPage()).thenReturn(Single.just(Page.create(0, HttpUrl.parse("http://2/"), null, Arrays.asList(
                 PokemonItem.create("bulbasaur", HttpUrl.parse("http://url"))
         ))));
-        when(service.nextPokemon(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
+        when(service.nextPokemonPage(eq("http://2/"))).thenReturn(Single.just(Page.create(0, null, HttpUrl.parse("http://1/"), Arrays.asList(
                 PokemonItem.create("ivysaur", HttpUrl.parse("http://url"))
         ))));
         PokedexPager pager = new PokedexPager(service);

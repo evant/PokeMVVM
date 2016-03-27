@@ -16,12 +16,15 @@ import me.tatarka.loader.Result;
 import me.tatarka.pokemvvm.BR;
 import me.tatarka.pokemvvm.api.PokemonItem;
 import me.tatarka.pokemvvm.dagger.ViewScope;
+import me.tatarka.pokemvvm.viewmodel.ErrorViewModel;
+import me.tatarka.pokemvvm.viewmodel.State;
 import rx.functions.Func1;
+import timber.log.Timber;
 
 @ViewScope
-public class PokedexViewModel extends BaseObservable implements ErrorItemViewModel.OnRetryListener {
-    private static final String TAG = "PokedexViewModel";
+public class PokedexViewModel extends BaseObservable implements ErrorViewModel, ErrorItemViewModel.OnRetryListener, PokemonItemViewModel.OnSelectListener {
 
+    private final Timber.Tree log;
     @VisibleForTesting
     final LoadingItemViewModel loading;
     @VisibleForTesting
@@ -34,7 +37,8 @@ public class PokedexViewModel extends BaseObservable implements ErrorItemViewMod
     private Callbacks callbacks;
 
     @Inject
-    public PokedexViewModel() {
+    public PokedexViewModel(Timber.Tree log) {
+        this.log = log;
         loading = new LoadingItemViewModel();
         error = new ErrorItemViewModel(this);
     }
@@ -75,25 +79,33 @@ public class PokedexViewModel extends BaseObservable implements ErrorItemViewMod
         callbacks.onRequestRetry();
     }
 
-    public void addItems(Result<PagedResult<PokemonItem>> result) {
+    @Override
+    public void selectItem(PokemonItem item) {
+        callbacks.onSelectItem(item);
+    }
+
+    public void addItems(PagedResult<PokemonItem> result) {
+        boolean needsToAddLoading = pokemonItems.isEmpty();
+        result.consume(pokemonItems, new Func1<PokemonItem, PokemonItemViewModel>() {
+            @Override
+            public PokemonItemViewModel call(PokemonItem pokemonItem) {
+                return new PokemonItemViewModel(pokemonItem, PokedexViewModel.this);
+            }
+        });
         if (result.isSuccess()) {
-            if (state == State.LOADING && pokemonItems.isEmpty()) {
+            if (state == State.LOADING && needsToAddLoading) {
                 this.items.insertItem(loading);
             }
-            result.getSuccess().consume(pokemonItems, new Func1<PokemonItem, PokemonItemViewModel>() {
-                @Override
-                public PokemonItemViewModel call(PokemonItem pokemonItem) {
-                    return new PokemonItemViewModel(pokemonItem);
-                }
-            });
             notifyPropertyChanged(BR.state);
         } else {
             this.items.removeItem(loading);
-            if (!items.isEmpty()) {
+            if (!pokemonItems.isEmpty()) {
                 this.items.insertItem(error);
             }
             state = State.ERROR;
             notifyPropertyChanged(BR.state);
+            Throwable error = result.getError();
+            log.e(error, error.getMessage());
         }
     }
 
@@ -105,13 +117,11 @@ public class PokedexViewModel extends BaseObservable implements ErrorItemViewMod
 
     public final ItemViewSelector<ItemViewModel> itemView = new ItemViewModelSelector<>();
 
-    public enum State {
-        LOADING, LOADED, ERROR
-    }
-
     public interface Callbacks {
         void onRequestRetry();
 
         void onRequestNextPage();
+
+        void onSelectItem(PokemonItem item);
     }
 }
