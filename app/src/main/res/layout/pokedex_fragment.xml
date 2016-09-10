@@ -24,7 +24,7 @@
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:itemView="@{viewModel.itemView}"
+            app:itemBinding="@{viewModel.itemBinding}"
             app:items="@{viewModel.items()}"
             app:layoutManager="@{LayoutManagers.linear()}"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"

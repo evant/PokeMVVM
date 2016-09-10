@@ -1,15 +1,15 @@
 package me.tatarka.pokemvvm.pokedex;
 
-import me.tatarka.bindingcollectionadapter.ItemView;
-import me.tatarka.bindingcollectionadapter.itemviews.ItemViewModel;
+import me.tatarka.bindingcollectionadapter.ItemBinding;
+import me.tatarka.bindingcollectionadapter.itembindings.ItemBindingModel;
 import me.tatarka.pokemvvm.R;
 
 /**
  * Represents an item that just shows a loading indicator.
  */
-public class LoadingItemViewModel implements ItemViewModel {
+public class LoadingItemViewModel implements ItemBindingModel {
     @Override
-    public void itemView(ItemView itemView) {
-        itemView.set(ItemView.BINDING_VARIABLE_NONE, R.layout.pokedex_item_loading);
+    public void onItemBind(ItemBinding itemBinding) {
+        itemBinding.set(ItemBinding.VAR_NONE, R.layout.pokedex_item_loading);
     }
 }

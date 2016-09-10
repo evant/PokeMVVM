@@ -2,14 +2,14 @@ package me.tatarka.pokemvvm.pokedex;
 
 import android.content.res.Resources;
 
-import me.tatarka.bindingcollectionadapter.ItemView;
-import me.tatarka.bindingcollectionadapter.itemviews.ItemViewModel;
+import me.tatarka.bindingcollectionadapter.ItemBinding;
+import me.tatarka.bindingcollectionadapter.itembindings.ItemBindingModel;
 import me.tatarka.pokemvvm.BR;
 import me.tatarka.pokemvvm.R;
 import me.tatarka.pokemvvm.api.PokemonItem;
 import me.tatarka.pokemvvm.util.StringUtils;
 
-public class PokemonItemViewModel implements ItemViewModel {
+public class PokemonItemViewModel implements ItemBindingModel {
 
     private final PokemonItem item;
     private final OnSelectListener listener;
@@ -41,8 +41,8 @@ public class PokemonItemViewModel implements ItemViewModel {
     }
 
     @Override
-    public void itemView(ItemView itemView) {
-        itemView.set(BR.item, R.layout.pokedex_item);
+    public void onItemBind(ItemBinding itemBinding) {
+        itemBinding.set(BR.item, R.layout.pokedex_item);
     }
 
     public interface OnSelectListener {

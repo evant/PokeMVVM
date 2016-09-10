@@ -2,11 +2,11 @@ package me.tatarka.pokemvvm.pokedex;
 
 import com.android.databinding.library.baseAdapters.BR;
 
-import me.tatarka.bindingcollectionadapter.ItemView;
-import me.tatarka.bindingcollectionadapter.itemviews.ItemViewModel;
+import me.tatarka.bindingcollectionadapter.ItemBinding;
+import me.tatarka.bindingcollectionadapter.itembindings.ItemBindingModel;
 import me.tatarka.pokemvvm.R;
 
-public class ErrorItemViewModel implements ItemViewModel {
+public class ErrorItemViewModel implements ItemBindingModel {
 
     private final OnRetryListener listener;
 
@@ -19,8 +19,8 @@ public class ErrorItemViewModel implements ItemViewModel {
     }
 
     @Override
-    public void itemView(ItemView itemView) {
-        itemView.set(BR.item, R.layout.pokedex_item_error);
+    public void onItemBind(ItemBinding itemBinding) {
+        itemBinding.set(BR.item, R.layout.pokedex_item_error);
     }
 
     public interface OnRetryListener {

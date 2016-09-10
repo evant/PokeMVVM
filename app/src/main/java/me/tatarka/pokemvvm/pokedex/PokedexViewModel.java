@@ -8,11 +8,10 @@ import android.support.annotation.VisibleForTesting;
 
 import javax.inject.Inject;
 
-import me.tatarka.bindingcollectionadapter.ItemViewSelector;
+import me.tatarka.bindingcollectionadapter.ItemBinding;
 import me.tatarka.bindingcollectionadapter.collections.MergeObservableList;
-import me.tatarka.bindingcollectionadapter.itemviews.ItemViewModel;
-import me.tatarka.bindingcollectionadapter.itemviews.ItemViewModelSelector;
-import me.tatarka.loader.Result;
+import me.tatarka.bindingcollectionadapter.itembindings.ItemBindingModel;
+import me.tatarka.bindingcollectionadapter.itembindings.OnItemBindModel;
 import me.tatarka.pokemvvm.BR;
 import me.tatarka.pokemvvm.api.PokemonItem;
 import me.tatarka.pokemvvm.dagger.ViewScope;
@@ -32,7 +31,7 @@ public class PokedexViewModel extends BaseObservable implements ErrorViewModel, 
 
     private State state;
     private ObservableList<PokemonItemViewModel> pokemonItems = new ObservableArrayList<>();
-    private MergeObservableList<ItemViewModel> items = new MergeObservableList<ItemViewModel>()
+    private MergeObservableList<ItemBindingModel> items = new MergeObservableList<ItemBindingModel>()
             .insertList(pokemonItems);
     private Callbacks callbacks;
 
@@ -47,7 +46,7 @@ public class PokedexViewModel extends BaseObservable implements ErrorViewModel, 
         this.callbacks = callbacks;
     }
 
-    public ObservableList<ItemViewModel> items() {
+    public ObservableList<ItemBindingModel> items() {
         return items;
     }
 
@@ -115,7 +114,7 @@ public class PokedexViewModel extends BaseObservable implements ErrorViewModel, 
         }
     }
 
-    public final ItemViewSelector<ItemViewModel> itemView = new ItemViewModelSelector<>();
+    public final ItemBinding<ItemBindingModel> itemBinding = ItemBinding.of(new OnItemBindModel<>());
 
     public interface Callbacks {
         void onRequestRetry();
